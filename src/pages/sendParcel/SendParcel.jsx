@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 
-const SendPercel = () => {
+const SendParcel = () => {
   const {
     register,
     handleSubmit,
@@ -30,9 +30,9 @@ const SendPercel = () => {
 
   // console.log(regions);
 
-  const handleSendPercel = (data) => {
+  const handleSendParcel = (data) => {
     console.log(data);
-    const isDocument = data.percelType === "document";
+    const isDocument = data.parcelType === "document";
     const isSameDistrict = data.senderDistrict === data.receiverDistrict;
     const parcelWeight = parseFloat(data.parcelWeight);
 
@@ -53,6 +53,9 @@ const SendPercel = () => {
     }
 
     console.log("cost", cost);
+
+    data.cost = cost;
+
     Swal.fire({
       title: "Agree with the cost?",
       text: `You will be charged ${cost} taka!`,
@@ -63,14 +66,11 @@ const SendPercel = () => {
       confirmButtonText: "Yes, I agree",
     }).then((result) => {
       if (result.isConfirmed) {
-        
         //save the parcel info to the database
-        axiosSecure.post('/parcels', data)
-          .then(res => {
-            console.log('after saving parcel', res.data);
+        axiosSecure.post("/parcels", data).then((res) => {
+          console.log("after saving parcel", res.data);
+        });
 
-          })
-        
         // Swal.fire({
         //   title: "Confirm!",
         //   text: "Your file has been deleted.",
@@ -82,18 +82,18 @@ const SendPercel = () => {
 
   return (
     <div className="bg-white rounded-4xl p-4">
-      <h2 className="text-5xl font-bold">Send A Percel</h2>
+      <h2 className="text-5xl font-bold">Send A Parcel</h2>
       <form
-        onSubmit={handleSubmit(handleSendPercel)}
+        onSubmit={handleSubmit(handleSendParcel)}
         className="mt-12 p-4 text-black"
       >
-        {/* percel type*/}
+        {/* parcel type*/}
         <div>
           <label className="label mr-4">
             <input
               type="radio"
               value="document"
-              {...register("percelType")}
+              {...register("parcelType")}
               className="radio"
               defaultChecked
             />
@@ -103,30 +103,30 @@ const SendPercel = () => {
             <input
               type="radio"
               value="non-document"
-              {...register("percelType")}
+              {...register("parcelType")}
               className="radio"
             />
             Non-Document
           </label>
         </div>
-        {/* percel info : name, weight */}
+        {/* parcel info : name, weight */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 my-8">
           <fieldset className="fieldset">
-            <label className="label">Percel Name</label>
+            <label className="label">Parcel Name</label>
             <input
               type="text"
-              {...register("percelName")}
+              {...register("parcelName")}
               className="input w-full"
-              placeholder="Percel Name"
+              placeholder="Parcel Name"
             />
           </fieldset>
           <fieldset className="fieldset">
-            <label className="label">Percel Weight</label>
+            <label className="label">Parcel Weight</label>
             <input
               type="number"
               {...register("parcelWeight")}
               className="input w-full"
-              placeholder="Percel Weight"
+              placeholder="Parcel Weight"
             />
           </fieldset>
         </div>
@@ -223,7 +223,7 @@ const SendPercel = () => {
             <label className="label">Receiver Email</label>
             <input
               type="email"
-              {...register("receiveremail")}
+              {...register("receiverEmail")}
               className="input w-full"
               placeholder="Receiver Email"
             />
@@ -282,7 +282,7 @@ const SendPercel = () => {
         </div>
         <input
           type="submit"
-          value="Send Percel"
+          value="Send Parcel"
           className="btn btn-primary text-secondary mt-4"
         />
       </form>
@@ -290,4 +290,4 @@ const SendPercel = () => {
   );
 };
 
-export default SendPercel;
+export default SendParcel;

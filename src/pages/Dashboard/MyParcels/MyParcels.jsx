@@ -6,6 +6,8 @@ import useAxiosSecure from '../../../hooks/useAxiosSecure';
 const MyParcels = () => {
   const { user } = useAuth();
   const axiousSecure = useAxiosSecure();
+  
+  //tanstack query
   const {data: parcels = []} = useQuery({
     queryKey: ['myParcels', user.email ],
     queryFn: async () => {
