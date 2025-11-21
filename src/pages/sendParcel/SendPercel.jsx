@@ -2,14 +2,18 @@ import React from "react";
 import { useForm, useWatch, Watch } from "react-hook-form";
 import { useLoaderData } from "react-router";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
 const SendPercel = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    // formState: { errors },
     control,
   } = useForm();
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const serviceCenters = useLoaderData();
   const regionsDuplicate = serviceCenters.map((c) => c.region);
@@ -56,11 +60,16 @@ const SendPercel = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, take my percel",
+      confirmButtonText: "Yes, I agree",
     }).then((result) => {
       if (result.isConfirmed) {
         
-        //
+        //save the parcel info to the database
+        axiosSecure.post('/parcels', data)
+          .then(res => {
+            console.log('after saving parcel', res.data);
+
+          })
         
         // Swal.fire({
         //   title: "Confirm!",
@@ -72,7 +81,7 @@ const SendPercel = () => {
   };
 
   return (
-    <div>
+    <div className="bg-white rounded-4xl p-4">
       <h2 className="text-5xl font-bold">Send A Percel</h2>
       <form
         onSubmit={handleSubmit(handleSendPercel)}
@@ -134,6 +143,7 @@ const SendPercel = () => {
               <input
                 type="text"
                 {...register("senderName")}
+                defaultValue={user?.displayName}
                 className="input w-full"
                 placeholder="Sender Name"
               />
@@ -141,7 +151,8 @@ const SendPercel = () => {
               <label className="label">Sender Email</label>
               <input
                 type="email"
-                {...register("senderemail")}
+                {...register("senderEmail")}
+                defaultValue={user?.email}
                 className="input w-full"
                 placeholder="Sender Email"
               />
