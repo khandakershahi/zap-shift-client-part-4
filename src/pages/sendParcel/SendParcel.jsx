@@ -4,6 +4,7 @@ import { useLoaderData } from "react-router";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
+import { useNavigate } from "react-router";
 
 const SendParcel = () => {
   const {
@@ -14,6 +15,7 @@ const SendParcel = () => {
   } = useForm();
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const serviceCenters = useLoaderData();
   const regionsDuplicate = serviceCenters.map((c) => c.region);
@@ -63,19 +65,25 @@ const SendParcel = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, I agree",
+      confirmButtonText: "confirm and continue payment",
     }).then((result) => {
       if (result.isConfirmed) {
         //save the parcel info to the database
         axiosSecure.post("/parcels", data).then((res) => {
           console.log("after saving parcel", res.data);
+          if(res.data.insertedId){
+            navigate('/dashboard/my-parcels');
+            Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: "Parcel has added, please Pay",
+              showConfirmButton: false,
+              timer: 2500
+            });
+          }
         });
 
-        // Swal.fire({
-        //   title: "Confirm!",
-        //   text: "Your file has been deleted.",
-        //   icon: "success",
-        // });
+    
       }
     });
   };
